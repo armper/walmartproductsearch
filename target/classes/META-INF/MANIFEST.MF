@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Implementation-Title: Product Search
 Implementation-Version: 1.0-SNAPSHOT
-Built-By: Armando Leon Perea
+Built-By: arman
 Implementation-Vendor-Id: com.walmart.armando
-Build-Jdk: 1.8.0_181
+Build-Jdk: 1.8.0_171
 Implementation-URL: https://projects.spring.io/spring-boot/#/spring-bo
  ot-starter-parent/product-search
 Created-By: Maven Integration for Eclipse
