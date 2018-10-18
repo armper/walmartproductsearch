@@ -4,8 +4,10 @@ import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.html.Label;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -39,42 +41,32 @@ public class MainView extends VerticalLayout {
 		 * The grid that will hold the recommended products based upon the selected
 		 * product
 		 */
+		H4 recommendedItemsLabel = new H4("Recommended Items");
+		recommendedItemsLabel.setVisible(false);
+
 		recommendedProducts = new Grid<>();
+		recommendedProducts.setVisible(false);
+
+		recommendedProducts.setHeightByRows(true);
 		recommendedProducts.setId("recommendedproductsgrid");
 		// use Polymer for data
 		recommendedProducts
-						.addColumn(TemplateRenderer
-								.<Product>of("<div><img width='45px' src = '[[item.thumbnailUrl]]'></img></div>")
-								.withProperty("thumbnailUrl", Product::getThumbnailImage))
-						.setHeader("Image").setFlexGrow(0).setWidth("10em");
+				.addColumn(TemplateRenderer
+						.<Product>of("<div><img width='45px' src = '[[item.thumbnailUrl]]'></img></div>")
+						.withProperty("thumbnailUrl", Product::getThumbnailImage))
+				.setHeader("Image").setFlexGrow(0).setWidth("10em");
 
 		recommendedProducts.addColumn(Product::getName).setHeader("Name");
 		recommendedProducts.addColumn(Product::getSalePrice).setHeader("Price").setFlexGrow(0);
-				// use Polymer for data 
-//				productGrid
-//						.addColumn(TemplateRenderer.<Product>of("<p style='white-space:normal' innerHTML$='[[item.description]]'>armando</p>")
-//								.withProperty("description", Product::getLongDescription))
-//						.setHeader("Description").setFlexGrow(1);
-		recommendedProducts.addComponentColumn(product->{
-					return new Html("<div style='white-space:normal'>"+product.getLongDescription()+"</div>");
-				}).setHeader("Description").setFlexGrow(1);
-
-		recommendedProducts.addSelectionListener(listener -> {
-					listener.getAllSelectedItems().stream().forEach(selectedProduct -> {
-						Collection<Product> findRecommendedProductByName = recommendationRepository
-								.findRecommendedProductByItemId(selectedProduct.getItemId(), selectedProduct.getName());
-						log.info("Found " + findRecommendedProductByName.size() + " recommended products: "
-								+ findRecommendedProductByName.stream().map(Product::getName).collect(Collectors.joining("")));
-						recommendedProducts.setItems(findRecommendedProductByName);
-					});
-				});
 
 		/*
 		 * The grid that will hold the products
 		 */
+		H4 foundLabel = new H4("Found Products");
 		productGrid = new Grid<>();
+		productGrid.setHeightByRows(true);
 		productGrid.setId("productgrid");
-		
+
 		// use Polymer for data
 		productGrid
 				.addColumn(TemplateRenderer
@@ -84,25 +76,35 @@ public class MainView extends VerticalLayout {
 
 		productGrid.addColumn(Product::getName).setHeader("Name");
 		productGrid.addColumn(Product::getSalePrice).setHeader("Price").setFlexGrow(0);
-		// use Polymer for data 
+		// use Polymer for data
 		productGrid
-				.addColumn(TemplateRenderer.<Product>of("<p style='white-space:normal' inner-H-T-M-L='[[item.description]]'></p>")
+				.addColumn(TemplateRenderer
+						.<Product>of("<p style='white-space:normal' inner-H-T-M-L='[[item.description]]'></p>")
 						.withProperty("description", Product::getLongDescription))
 				.setHeader("Description").setFlexGrow(1);
-//		productGrid.addComponentColumn(product->{
-//			return new Html("<div style='white-space:normal'>"+product.getLongDescription()+"</div>");
-//		}).setHeader("Description").setFlexGrow(1);
+		// productGrid.addComponentColumn(product->{
+		// return new Html("<div
+		// style='white-space:normal'>"+product.getLongDescription()+"</div>");
+		// }).setHeader("Description").setFlexGrow(1);
 
 		productGrid.addSelectionListener(listener -> {
 			listener.getAllSelectedItems().stream().forEach(selectedProduct -> {
-				
-				log.info("selected itemId: "+selectedProduct.getItemId());
-				
+
+				log.info("selected itemId: " + selectedProduct.getItemId());
+
 				Collection<Product> findRecommendedProductByName = recommendationRepository
 						.findRecommendedProductByItemId(selectedProduct.getItemId(), selectedProduct.getName());
 				log.info("Found " + findRecommendedProductByName.size() + " recommended products: "
 						+ findRecommendedProductByName.stream().map(Product::getName).collect(Collectors.joining("")));
 				recommendedProducts.setItems(findRecommendedProductByName);
+
+				if (findRecommendedProductByName.size() == 0) {
+					recommendedItemsLabel.setVisible(false);
+					recommendedProducts.setVisible(false);
+				} else {
+					recommendedItemsLabel.setVisible(true);
+					recommendedProducts.setVisible(true);
+				}
 			});
 		});
 
@@ -115,7 +117,7 @@ public class MainView extends VerticalLayout {
 
 		button = new Button("Search", listener -> {
 			productGrid.setItems(productRepository.searchByName(searchTextField.getValue()));
-
+			recommendedProducts.setItems(new ArrayList<Product>());
 		});
 
 		searchDiv.add(searchTextField, button);
@@ -130,7 +132,7 @@ public class MainView extends VerticalLayout {
 		/*
 		 * add product search area and search results area to the layout
 		 */
-		add(searchDiv, productGrid, recommendedProducts);
+		add(searchDiv, productGrid, recommendedItemsLabel, recommendedProducts);
 
 	}
 

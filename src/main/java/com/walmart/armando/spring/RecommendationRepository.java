@@ -47,12 +47,7 @@ public class RecommendationRepository {
 
 			products.addAll(response.getBody());
 		} catch (RestClientException e) {
-			Product noProductFoundProduct=new Product();
-			noProductFoundProduct.setItemId(999L);
-			noProductFoundProduct.setName("None Found");
-			noProductFoundProduct.setLongDescription("No recommended products found for item: "+name);
-			noProductFoundProduct.setThumbnailImage("https://i5.walmartimages.com/asr/8ec661ff-cd21-4edf-8b5c-bc96870d1b92_1.28f2e1d512c3dd80cdc8c8a8e9f67d87.jpeg?odnHeight=100&odnWidth=100&odnBg=FFFFFF");
-			products.add(noProductFoundProduct);
+			//take no action since no items were found
 		}
 
 		return products;
