@@ -82,10 +82,6 @@ public class MainView extends VerticalLayout {
 						.<Product>of("<p style='white-space:normal' inner-H-T-M-L='[[item.description]]'></p>")
 						.withProperty("description", Product::getLongDescription))
 				.setHeader("Description").setFlexGrow(1);
-		// productGrid.addComponentColumn(product->{
-		// return new Html("<div
-		// style='white-space:normal'>"+product.getLongDescription()+"</div>");
-		// }).setHeader("Description").setFlexGrow(1);
 
 		productGrid.addSelectionListener(listener -> {
 			listener.getAllSelectedItems().stream().forEach(selectedProduct -> {
@@ -117,7 +113,11 @@ public class MainView extends VerticalLayout {
 
 		button = new Button("Search", listener -> {
 			productGrid.setItems(productRepository.searchByName(searchTextField.getValue()));
+			
+			//reset recommended products
 			recommendedProducts.setItems(new ArrayList<Product>());
+			recommendedItemsLabel.setVisible(false);
+			recommendedProducts.setVisible(false);
 		});
 
 		searchDiv.add(searchTextField, button);
