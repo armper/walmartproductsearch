@@ -1,5 +1,8 @@
 package com.walmart.armando.spring;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+//@JsonIgnoreProperties(ignoreUnknown = true)
 public class Product {
 
 	private Long itemId;
