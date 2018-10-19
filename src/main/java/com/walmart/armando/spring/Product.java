@@ -1,5 +1,7 @@
 package com.walmart.armando.spring;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 //@JsonIgnoreProperties(ignoreUnknown = true)
@@ -26,7 +28,8 @@ public class Product {
 	}
 
 	public String getLongDescription() {
-		return longDescription;
+
+		return StringEscapeUtils.unescapeHtml(this.longDescription);
 	}
 
 	public void setLongDescription(String longDescription) {

@@ -1,0 +1,14 @@
+com\walmart\armando\spring\AppConfiguration.class
+com\walmart\armando\spring\RecommendedProductList.class
+com\walmart\armando\spring\DetailsPage.class
+com\walmart\armando\spring\DetailsModel.class
+com\walmart\armando\spring\Application.class
+com\walmart\armando\spring\MainView.class
+com\walmart\armando\spring\RecommendationRepository.class
+com\walmart\armando\spring\ProductRepository.class
+com\walmart\armando\spring\RecommendationRepository$1.class
+com\walmart\armando\spring\DetailsService.class
+com\walmart\armando\spring\DetailsView.class
+com\walmart\armando\spring\ProductList.class
+com\walmart\armando\spring\RecommendedProducts.class
+com\walmart\armando\spring\Product.class

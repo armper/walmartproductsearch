@@ -1,23 +1,23 @@
 package com.walmart.armando.spring;
 
-import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H4;
-import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.NativeButton;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.Notification.Position;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.TemplateRenderer;
 import com.vaadin.flow.router.Route;
@@ -35,7 +35,9 @@ public class MainView extends VerticalLayout {
 
 	private Button button;
 
-	public MainView(@Autowired ProductRepository productRepository, RecommendationRepository recommendationRepository) {
+	private Notification notification=new Notification();
+
+	public MainView(@Autowired ProductRepository productRepository, RecommendationRepository recommendationRepository, DetailsService detailsService) {
 
 		/*
 		 * The grid that will hold the recommended products based upon the selected
@@ -62,7 +64,6 @@ public class MainView extends VerticalLayout {
 		/*
 		 * The grid that will hold the products
 		 */
-		H4 foundLabel = new H4("Found Products");
 		productGrid = new Grid<>();
 		productGrid.setHeightByRows(true);
 		productGrid.setId("productgrid");
@@ -76,13 +77,7 @@ public class MainView extends VerticalLayout {
 
 		productGrid.addColumn(Product::getName).setHeader("Name");
 		productGrid.addColumn(Product::getSalePrice).setHeader("Price").setFlexGrow(0);
-		// use Polymer for data
-		productGrid
-				.addColumn(TemplateRenderer
-						.<Product>of("<p style='white-space:normal' inner-H-T-M-L='[[item.description]]'></p>")
-						.withProperty("description", Product::getLongDescription))
-				.setHeader("Description").setFlexGrow(1);
-
+	
 		productGrid.addSelectionListener(listener -> {
 			listener.getAllSelectedItems().stream().forEach(selectedProduct -> {
 
@@ -101,6 +96,22 @@ public class MainView extends VerticalLayout {
 					recommendedItemsLabel.setVisible(true);
 					recommendedProducts.setVisible(true);
 				}
+				
+				DetailsView detailsView= new DetailsView(selectedProduct);
+				
+				Div detailsContent=new Div();
+				
+				notification.close();
+				
+				notification = new Notification(detailsContent);
+				notification.setPosition(Position.MIDDLE);
+				
+				detailsContent.addClickListener(event -> notification.close());
+
+				detailsContent.add(detailsView, recommendedItemsLabel, recommendedProducts);
+
+				notification.open();
+//
 			});
 		});
 
@@ -132,7 +143,7 @@ public class MainView extends VerticalLayout {
 		/*
 		 * add product search area and search results area to the layout
 		 */
-		add(searchDiv, productGrid, recommendedItemsLabel, recommendedProducts);
+		add(searchDiv, productGrid);
 
 	}
 

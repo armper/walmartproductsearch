@@ -1,0 +1,13 @@
+<dom-module id="details-view">
+    <template>
+            <div id="description" inner-H-T-M-L='[[description]]'></div>
+    </template>
+    <script>
+        class DetailsView extends Polymer.Element {
+            static get is() {
+                return 'details-view'
+            }
+        }
+        customElements.define(DetailsView.is, DetailsView);
+    </script>
+</dom-module>
