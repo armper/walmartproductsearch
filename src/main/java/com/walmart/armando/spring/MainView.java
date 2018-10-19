@@ -6,6 +6,7 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H4;
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.NativeButton;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.Notification.Position;
@@ -45,6 +46,12 @@ public class MainView extends VerticalLayout {
 
 	public MainView(@Autowired ProductRepository productRepository, RecommendationRepository recommendationRepository, DetailsService detailsService) {
 
+		getClass().getResourceAsStream("wmt_h_r_c.jpg");
+		
+		Image image = new Image("wmt_h_r_c.jpg", "Walmart Logo");
+		image.setWidth("20em");
+		add(image);
+		
 		/*
 		 * The grid that will hold the recommended products based upon the selected
 		 * product
