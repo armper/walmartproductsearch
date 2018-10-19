@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class Product {
 
 	private Long itemId;
-	private String name, longDescription, thumbnailImage;
+	private String name, longDescription, thumbnailImage, mediumImage;
 	private Double salePrice;
 
 	public Long getItemId() {
@@ -80,6 +80,14 @@ public class Product {
 	@Override
 	public String toString() {
 		return "Product [itemId=" + itemId + ", name=" + name + ", salePrice=" + salePrice + "]";
+	}
+
+	public String getMediumImage() {
+		return mediumImage;
+	}
+
+	public void setMediumImage(String mediumImage) {
+		this.mediumImage = mediumImage;
 	}
 
 }

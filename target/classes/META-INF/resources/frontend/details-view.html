@@ -1,6 +1,17 @@
 <dom-module id="details-view">
     <template>
-            <div id="description" inner-H-T-M-L='[[description]]'></div>
+    <style>
+            p.smallText{
+                font-size: small;
+                
+            }
+            
+        </style>
+        
+        <p>[[name]]</p>
+        
+        <img src="[[mediumImage]]"></img>
+            <p class="smallText" id="description" inner-H-T-M-L="[[description]]"></p>
     </template>
     <script>
         class DetailsView extends Polymer.Element {

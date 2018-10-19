@@ -1,6 +1,8 @@
 package com.walmart.armando.spring;
 
+import com.vaadin.flow.component.ClickNotifier;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H4;
@@ -35,7 +37,11 @@ public class MainView extends VerticalLayout {
 
 	private Button button;
 
-	private Notification notification=new Notification();
+	private Dialog productPopup=new Dialog();
+
+	private DetailsView detailsView;
+
+	private Dialog recommendedPopup=new Dialog();
 
 	public MainView(@Autowired ProductRepository productRepository, RecommendationRepository recommendationRepository, DetailsService detailsService) {
 
@@ -60,6 +66,29 @@ public class MainView extends VerticalLayout {
 
 		recommendedProducts.addColumn(Product::getName).setHeader("Name");
 		recommendedProducts.addColumn(Product::getSalePrice).setHeader("Price").setFlexGrow(0);
+		
+		recommendedProducts.addSelectionListener(listener->{
+			listener.getFirstSelectedItem().ifPresent(item->{
+				productPopup.close();
+				
+				//set up the product details popup
+				DetailsView recommendedDetailsView= new DetailsView(item);
+				
+				Div detailsContent=new Div();
+				detailsContent.setSizeFull();
+				
+				Button closeButton=new Button("Close");
+
+				detailsContent.add(closeButton, recommendedDetailsView);
+				
+				//set up the details popup as a notification
+				recommendedPopup = new Dialog(detailsContent);
+
+				closeButton.addClickListener(event -> recommendedPopup.close());
+
+				recommendedPopup.open();
+			});
+		});
 
 		/*
 		 * The grid that will hold the products
@@ -71,7 +100,7 @@ public class MainView extends VerticalLayout {
 		// use Polymer for data
 		productGrid
 				.addColumn(TemplateRenderer
-						.<Product>of("<div><img width='45px' src = '[[item.thumbnailUrl]]'></img></div>")
+						.<Product>of("<div><img src = '[[item.thumbnailUrl]]'></img></div>")
 						.withProperty("thumbnailUrl", Product::getThumbnailImage))
 				.setHeader("Image").setFlexGrow(0).setWidth("10em");
 
@@ -81,14 +110,20 @@ public class MainView extends VerticalLayout {
 		productGrid.addSelectionListener(listener -> {
 			listener.getAllSelectedItems().stream().forEach(selectedProduct -> {
 
+				//close any possibly open  popups
+				productPopup.close();	
+				recommendedPopup.close();
+
 				log.info("selected itemId: " + selectedProduct.getItemId());
 
+				//find recommended products
 				Collection<Product> findRecommendedProductByName = recommendationRepository
 						.findRecommendedProductByItemId(selectedProduct.getItemId(), selectedProduct.getName());
 				log.info("Found " + findRecommendedProductByName.size() + " recommended products: "
 						+ findRecommendedProductByName.stream().map(Product::getName).collect(Collectors.joining("")));
 				recommendedProducts.setItems(findRecommendedProductByName);
 
+				//show recommended product grid if there is content
 				if (findRecommendedProductByName.size() == 0) {
 					recommendedItemsLabel.setVisible(false);
 					recommendedProducts.setVisible(false);
@@ -97,20 +132,19 @@ public class MainView extends VerticalLayout {
 					recommendedProducts.setVisible(true);
 				}
 				
-				DetailsView detailsView= new DetailsView(selectedProduct);
+				//set up the product details popup
+				detailsView= new DetailsView(selectedProduct);
 				
 				Div detailsContent=new Div();
 				
-				notification.close();
-				
-				notification = new Notification(detailsContent);
-				notification.setPosition(Position.MIDDLE);
-				
-				detailsContent.addClickListener(event -> notification.close());
+				Button closeButton=new Button("Close");
+				closeButton.addClickListener(event -> productPopup.close());
 
-				detailsContent.add(detailsView, recommendedItemsLabel, recommendedProducts);
-
-				notification.open();
+				detailsContent.add(closeButton, detailsView, recommendedItemsLabel, recommendedProducts);
+				
+				//set up the details popup as a notification
+				productPopup = new Dialog(detailsContent);
+				productPopup.open();
 //
 			});
 		});

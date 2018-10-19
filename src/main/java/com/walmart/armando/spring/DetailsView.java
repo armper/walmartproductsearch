@@ -13,7 +13,11 @@ public class DetailsView extends PolymerTemplate<DetailsModel> {
 
 	public DetailsView(Product product) {
 
+		getModel().setName(product.getName());
+		
 		getModel().setDescription(product.getLongDescription());
+		
+		getModel().setMediumImage(product.getMediumImage());
 
 	}
 
