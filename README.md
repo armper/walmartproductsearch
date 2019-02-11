@@ -1,3 +1,5 @@
+Walmart Front End demo using Walmart API
+
 # Project Base for Vaadin Flow and Spring Boot
 
 This project can be used as a starting point to create your own Vaadin Flow application with Spring Boot.
